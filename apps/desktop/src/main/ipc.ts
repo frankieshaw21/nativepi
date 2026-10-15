@@ -178,8 +178,10 @@ function stopProjectSessionWatch(projectDir: string): void {
   projectSessionWatches.delete(projectDir);
 }
 
-function markBusy(projectDir: string, until: number): void {
-  busyUntil.set(projectDir, until);
+function markBusy(sessionFile: string, until: number): void {
+  // Prompt acceptance and session-setting writes are not run completion. Only
+  // agent_settled may release a running Pi, even while it is silent on retry.
+  busyUntil.set(sessionFile, pis.get(sessionFile)?.isRunning ? Number.POSITIVE_INFINITY : until);
 }
 
 function scheduleSuppressedSessionCheck(sessionFile: string): void {
