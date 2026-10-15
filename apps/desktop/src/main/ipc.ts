@@ -740,7 +740,7 @@ const handlers: HandlerMap = {
     }
   },
 
-  submit: async ({ projectDir, sessionFile, message, images, streamingBehavior }) => {
+  submit: async ({ projectDir, sessionFile, message, images, model, streamingBehavior }) => {
     // Claim the write before Pi is even up, so our own append is never mistaken
     // for a concurrent editor and a cold start counts as work in flight: the
     // renderer has already cleared the draft, and a close that slipped through
@@ -756,6 +756,10 @@ const handlers: HandlerMap = {
         if (draftPis.get(projectDir) === pi) draftPis.delete(projectDir);
       }
       if (sessionFile) markBusy(sessionFile, Number.POSITIVE_INFINITY);
+      // The picker updates optimistically. Apply its exact provider/model here too,
+      // so an immediate send cannot race the earlier set_model request and use
+      // the previous provider's account.
+      if (model) await pi.request({ type: "set_model", provider: model.provider, modelId: model.id });
       await pi.request({ type: "prompt", message, images, streamingBehavior });
       if (sessionFile && busyUntil.get(sessionFile) === Number.POSITIVE_INFINITY) {
         markBusy(sessionFile, Date.now() + SETTLE_GRACE_MS);

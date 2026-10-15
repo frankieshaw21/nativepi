@@ -35,7 +35,10 @@ test("switching sessions keeps accepted runs alive until Pi settles", async () =
           data = { cancelled: false };
         }
         if (command.type === "get_state") data = { sessionFile: proc.sessionFile };
-        if (command.type === "set_model") proc.model = command.modelId;
+        if (command.type === "set_model") {
+          proc.model = command.modelId;
+          proc.provider = command.provider;
+        }
         proc.stdout.write(JSON.stringify({ type: "response", id: command.id, success: true, data }) + "\\n");
         if (command.type === "prompt" && command.message !== "/handled") proc.event("agent_start");
         done();
@@ -85,8 +88,10 @@ test("switching sessions keeps accepted runs alive until Pi settles", async () =
     assert.equal(second.killed, false);
 
     const c = { projectDir: a.projectDir, sessionFile: "chat-c.jsonl" };
-    assert.equal((await request("submit", { ...c, message: "/handled" })).ok, true);
+    assert.equal((await request("submit", { ...c, message: "/handled", model: { provider: "kiro", id: "claude-sonnet" } })).ok, true);
     const handled = processes.find((proc) => proc.sessionFile === c.sessionFile);
+    assert.equal(handled.provider, "kiro", "submit must apply the selected provider before prompting");
+    assert.equal(handled.model, "claude-sonnet");
     now += 10_000;
     await request("ensurePi", b);
     assert.equal(handled.killed, true, "handled commands must not stay busy forever");
