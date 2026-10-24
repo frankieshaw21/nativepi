@@ -53,6 +53,8 @@ const STOP_TIMEOUT_MS = 5000;
 export class PiProcess {
   readonly projectDir: string;
   boundSessionFile: string | undefined;
+  // Includes retry/compaction waits and queued continuations, until Pi settles.
+  isRunning = false;
 
   private proc: ChildProcessWithoutNullStreams;
   private onEvent: (msg: PiMessage) => void;
@@ -104,6 +106,7 @@ export class PiProcess {
     const finish = (code: number | null, error?: Error) => {
       if (finished) return;
       finished = true;
+      this.isRunning = false;
       this.rejectAll(error ?? new Error(`Pi exited (${code ?? "?"})`));
       this.resolveEnded();
       onExit(code, error, this.stopping);
@@ -147,6 +150,8 @@ export class PiProcess {
       this.onFrame(frame.data);
       return;
     }
+    if (msg.type === "agent_start") this.isRunning = true;
+    else if (msg.type === "agent_settled") this.isRunning = false;
     this.onEvent(msg);
   }
 

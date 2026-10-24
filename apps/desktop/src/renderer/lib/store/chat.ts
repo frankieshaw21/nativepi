@@ -492,6 +492,7 @@ export const createChatSlice: SliceCreator<ChatSlice> = (set, get) => ({
         sessionFile: s.activeSessionFile,
         message: text,
         images: images.map(toImageContent),
+        model: s.model ? { provider: s.model.provider, id: s.model.id } : undefined,
       });
     } catch (error) {
       res = { ok: false, error: error instanceof Error ? error.message : String(error) };
