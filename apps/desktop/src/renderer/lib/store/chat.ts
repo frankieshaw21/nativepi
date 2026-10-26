@@ -492,6 +492,7 @@ export const createChatSlice: SliceCreator<ChatSlice> = (set, get) => ({
         sessionFile: s.activeSessionFile,
         message: text,
         images: images.map(toImageContent),
+        model: s.model ? { provider: s.model.provider, id: s.model.id } : undefined,
       });
     } catch (error) {
       res = { ok: false, error: error instanceof Error ? error.message : String(error) };
@@ -743,7 +744,10 @@ export const createChatSlice: SliceCreator<ChatSlice> = (set, get) => ({
       return;
     }
     if (event.type === "thinking_level_changed") {
-      if (projectDir === s.activeProjectPath) {
+      if (
+        projectDir === s.activeProjectPath
+        && (sessionFile ?? null) === (s.activeSessionFile ?? null)
+      ) {
         set({ thinkingLevel: (event as { level: ThinkingLevel }).level });
       }
       return;

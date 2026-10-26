@@ -420,6 +420,38 @@ test("switching chats clears controls until that session state arrives", async (
   expect(useAppStore.getState().thinkingLevel).toBe("off");
 });
 
+test("a thinking event from another chat cannot overwrite the active chat", () => {
+  useAppStore.setState({
+    activeProjectPath: "A:\\controls",
+    activeSessionFile: "active.jsonl",
+    thinkingLevel: "high",
+  });
+
+  useAppStore.getState().onEvent({
+    projectDir: "A:\\controls",
+    sessionFile: "background.jsonl",
+    event: { type: "thinking_level_changed", level: "medium" },
+  });
+
+  expect(useAppStore.getState().thinkingLevel).toBe("high");
+});
+
+test("the active chat's thinking event updates its control", () => {
+  useAppStore.setState({
+    activeProjectPath: "A:\\controls",
+    activeSessionFile: "active.jsonl",
+    thinkingLevel: "off",
+  });
+
+  useAppStore.getState().onEvent({
+    projectDir: "A:\\controls",
+    sessionFile: "active.jsonl",
+    event: { type: "thinking_level_changed", level: "high" },
+  });
+
+  expect(useAppStore.getState().thinkingLevel).toBe("high");
+});
+
 test("delayed history cannot overwrite messages streamed while it loads", async () => {
   let finishRead!: (response: { entries: [] }) => void;
   stubInvoke(async (channel) => {
