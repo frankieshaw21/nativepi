@@ -4,6 +4,7 @@ import {
   createContext,
   isValidElement,
   useContext,
+  useDeferredValue,
   useEffect,
   useId,
   useState,
@@ -273,6 +274,12 @@ export default function Markdown({
   className?: string;
   streaming?: boolean;
 }) {
+  // Parsing Markdown, highlighting code, and laying out KaTeX can exceed a
+  // token's arrival interval. Let input and controls paint first while a live
+  // response catches up; committed messages keep rendering synchronously.
+  const deferredChildren = useDeferredValue(children);
+  const renderedChildren = streaming ? deferredChildren : children;
+
   return (
     <streamingContext.Provider value={streaming}>
       <div className={cn("markdown", className)} data-streaming={streaming || undefined}>
@@ -280,10 +287,14 @@ export default function Markdown({
           components={components}
           urlTransform={markdownUrlTransform}
           remarkPlugins={remarkPlugins}
-          rehypePlugins={rehypePlugins}
+          // Highlighting and KaTeX walk and transform the whole syntax tree.
+          // Repeating that work as a response grows makes long code or formula
+          // streams progressively slower; the finalized render applies both
+          // once, while the live preview keeps ordinary Markdown structure.
+          rehypePlugins={streaming ? undefined : rehypePlugins}
           skipHtml
         >
-          {children}
+          {renderedChildren}
         </ReactMarkdown>
         {streaming ? <span className="markdown-caret" aria-hidden="true" /> : null}
       </div>

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Apply the model pick to the same Pi process before sending, preventing an immediate Kiro selection from consuming the previous Codex account.
+- Start Pi directly in a resumed conversation instead of loading a temporary session before switching to it.
+- Reduce conversation stutter by throttling and deferring live rich-text rendering.
 
 ## [1.15.0] - 2026-10-10
 
