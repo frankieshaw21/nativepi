@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- Apply the model pick to the same Pi process before sending, preventing an immediate Kiro selection from consuming the previous Codex account.
 - Start Pi directly in a resumed conversation instead of loading a temporary session before switching to it.
 - Reduce conversation stutter by throttling and deferring live rich-text rendering.
+
+## [1.16.0] - 2026-10-25
+
+### Fixed
+- Apply the model pick to the same Pi process before sending, preventing an immediate Kiro selection from consuming the previous Codex account.
 
 ## [1.15.0] - 2026-10-10
 
@@ -552,7 +556,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial NativePi desktop wrapper for the Pi coding agent (Electron + electron-vite + Bun + React 19.2 + Vite 8 + Tailwind CSS 4 + shadcn/ui + Zustand + Zod).
 - Project bootstrap, README and logo assets, build and release automation.
 
-[Unreleased]: https://github.com/nonlooped/nativepi/compare/v1.15.0...HEAD
+[Unreleased]: https://github.com/nonlooped/nativepi/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/nonlooped/nativepi/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/nonlooped/nativepi/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/nonlooped/nativepi/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/nonlooped/nativepi/compare/v1.12.1...v1.13.0
