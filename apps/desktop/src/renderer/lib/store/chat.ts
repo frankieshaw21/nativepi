@@ -493,6 +493,7 @@ export const createChatSlice: SliceCreator<ChatSlice> = (set, get) => ({
         message: text,
         images: images.map(toImageContent),
         model: s.model ? { provider: s.model.provider, id: s.model.id } : undefined,
+        thinkingLevel: s.thinkingLevel,
       });
     } catch (error) {
       res = { ok: false, error: error instanceof Error ? error.message : String(error) };

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Keep the selected thinking level when sending immediately after changing the control.
+
 ## [1.16.0] - 2026-10-25
 
 ### Fixed
