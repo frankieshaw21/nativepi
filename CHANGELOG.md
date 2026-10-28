@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Keep the selected thinking level when sending immediately after changing the control.
+- Keep background chat thinking-level events from overwriting the active chat selection.
 
 ## [1.16.0] - 2026-10-25
 
@@ -28,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refine workspace controls, source control review, and extension integrations.
 
 ### Fixed
-- Keep background chat thinking-level events from overwriting the active chat selection.
 - Open the project actions menu without a Base UI crash.
 - Render Mermaid labels and local transcript images while keeping image access inside the project.
 - Preserve update feeds for every supported platform and architecture.
