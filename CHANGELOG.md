@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Keep the selected thinking level when sending immediately after changing the control.
 - Keep background chat thinking-level events from overwriting the active chat selection.
+- Start Pi directly in a resumed conversation instead of loading a temporary session before switching to it.
+- Reduce conversation stutter by throttling and deferring live rich-text rendering.
 
 ## [1.16.0] - 2026-10-25
 

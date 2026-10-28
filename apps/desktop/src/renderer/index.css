@@ -734,6 +734,10 @@ html:not(.dark) .composer-surface {
    is written by `lib/appearance.ts`: "reduced" forces this on, "full" forces it
    off, and no attribute at all leaves the OS in charge. */
 @media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) .markdown-caret {
+    display: none;
+  }
+
   html:not([data-motion="full"]) *,
   html:not([data-motion="full"]) *::before,
   html:not([data-motion="full"]) *::after {
@@ -742,6 +746,10 @@ html:not(.dark) .composer-surface {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+html[data-motion="reduced"] .markdown-caret {
+  display: none;
 }
 
 html[data-motion="reduced"] *,

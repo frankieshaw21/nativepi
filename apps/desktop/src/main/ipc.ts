@@ -248,7 +248,10 @@ function queueDisplayDelta(projectDir: string, pi: PiProcess, event: PiMessage):
   eventBatches.set(pi, {
     projectDir,
     events: [event],
-    timer: setTimeout(() => flushEventBatch(pi), 16),
+    // Rich Markdown parsing is substantially more expensive than forwarding a
+    // token. Two-frame batches keep the stream feeling live without asking the
+    // renderer to rebuild highlighted Markdown up to sixty times per second.
+    timer: setTimeout(() => flushEventBatch(pi), 32),
   });
 }
 
@@ -410,7 +413,10 @@ function ensurePi(projectDir: string, sessionFile?: string, fresh = false): Prom
         }
       },
       (frame) => forwardPiFrame(projectDir, pi, frame),
-      isProjectTrusted(projectDir) ? [] : ["--no-approve"],
+      [
+        ...(sessionFile ? ["--session", sessionFile] : []),
+        ...(isProjectTrusted(projectDir) ? [] : ["--no-approve"]),
+      ],
     );
     startingPis.set(key, pi);
     try {
