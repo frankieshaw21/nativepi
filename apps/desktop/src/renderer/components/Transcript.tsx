@@ -774,8 +774,7 @@ function AssistantResponse({
   const finalText = finalMessage?.content
     .flatMap((block) => (block.type === "text" ? block.text : []))
     .join("") ?? "";
-  const reduced = useReducedMotion();
-  const workIsStreaming = streaming && !finalText && !reduced;
+  const workIsStreaming = streaming && !finalText;
   const extensionRenderers = useAppStore((s) => s.extRenderers);
   const graphicalToolNames = useMemo(
     () => new Set(extensionRenderers.flatMap((extension) => Object.keys(extension.renderer.tools ?? {}))),
@@ -874,7 +873,7 @@ function AssistantResponse({
       ) : null}
       {finalText ? (
         <div data-response-text>
-          <Markdown streaming={streaming && !reduced}>{finalText}</Markdown>
+          <Markdown streaming={streaming}>{finalText}</Markdown>
         </div>
       ) : null}
       {changes.files.length > 0 ? <ChangeStrip changes={changes} /> : null}

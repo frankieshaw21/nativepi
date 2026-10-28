@@ -19,18 +19,21 @@ test("switching sessions keeps accepted runs alive until Pi settles", async () =
     mock.module("node-pty", () => ({ spawn: () => { throw new Error("Unexpected terminal"); } }));
 
     const processes = [];
-    mock.module("node:child_process", () => ({ ...childProcess, spawn: () => {
+    mock.module("node:child_process", () => ({ ...childProcess, spawn: (_executable, args) => {
       const proc = new EventEmitter();
       proc.stdout = new PassThrough();
       proc.stderr = new PassThrough();
       proc.killed = false;
-      proc.sessionFile = "draft-" + processes.length;
+      const sessionIndex = args.indexOf("--session");
+      proc.sessionFile = sessionIndex < 0 ? "draft-" + processes.length : args[sessionIndex + 1];
+      proc.switches = 0;
       proc.event = (type) => proc.stdout.write(JSON.stringify({ type }) + "\\n");
       proc.kill = () => { proc.killed = true; proc.emit("exit", 0); };
       proc.stdin = new Writable({ write(chunk, _encoding, done) {
         const command = JSON.parse(chunk.toString());
         let data = {};
         if (command.type === "switch_session") {
+          proc.switches += 1;
           proc.sessionFile = command.sessionPath;
           data = { cancelled: false };
         }
@@ -55,6 +58,7 @@ test("switching sessions keeps accepted runs alive until Pi settles", async () =
     assert.equal((await request("setModel", { ...a, provider: "provider-a", modelId: "model-a" })).ok, true);
     assert.equal((await request("submit", { ...a, message: "work in A" })).ok, true);
     const first = processes.find((proc) => proc.sessionFile === a.sessionFile);
+    assert.equal(first.switches, 0, "resumed sessions must start directly in the target session");
     now += 10_000;
     assert.equal((await request("ensurePi", b)).ok, true);
     assert.equal(first.killed, false, "prompt acceptance must not make A idle");

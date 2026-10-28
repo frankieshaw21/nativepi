@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/message-scroller.tsx";
 import { Message } from "@/components/ui/message.tsx";
 import { Bubble, BubbleContent } from "@/components/ui/bubble.tsx";
-import { useReducedMotion } from "@/lib/motion.ts";
 import Markdown from "./Markdown.tsx";
 
 type Turn = {
@@ -156,7 +155,6 @@ function WorkBlock({ block }: { block: ConversationContentBlock }) {
 function AssistantTurn({ turn, running }: { turn: Turn; running: boolean }) {
   const final = turn.assistants.at(-1);
   const error = turn.assistants.reduce<string | undefined>((current, message) => message.error ?? current, undefined);
-  const reduced = useReducedMotion();
   const finalHasTool = final?.content.some((block) => block.type === "tool") ?? false;
   const finalText = final && !finalHasTool ? messageText(final) : "";
   const work = turn.assistants.flatMap((message) =>
@@ -195,7 +193,7 @@ function AssistantTurn({ turn, running }: { turn: Turn; running: boolean }) {
         </Collapsible.Root>
       ) : null}
       {finalText ? (
-        <Markdown streaming={running && !reduced}>
+        <Markdown streaming={running}>
           {finalText}
         </Markdown>
       ) : null}
